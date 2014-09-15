@@ -2,8 +2,9 @@ acl2h
 
 :q
 
-(defun trace-level ()
-  ccl::*trace-level*)
+(defvar *entries* nil)
+
+(defvar *exits* nil)
 
 (lp)
 
@@ -11,18 +12,19 @@ acl2h
  (rewrite-with-lemma
   :entry (pprogn
           (setf *entries* 
-                (cons (trace-level)
-                      (cons (list 'rewrite-with-lemma term
-                                  (base-symbol (access rewrite-rule lemma :rune)))
-                            *entries*))) 
+                (cons (list (1+ (@ trace-level))
+                            'rewrite-with-lemma 
+                            term
+                            (base-symbol (access rewrite-rule lemma :rune)))
+                      *entries*)) 
           arglist)
   :exit (pprogn
          (setf *exits* 
-               (cons (trace-level)
-                     (cons (list 'rewrite-with-lemma
-                                 (cadr values)
-                                 (caddr values))
-                           *exits*))) 
+               (cons (list (@ trace-level)
+                           'rewrite-with-lemma
+                           (cadr values)
+                           (caddr values))
+                     *exits*)) 
          values)))
 
 
@@ -31,3 +33,4 @@ acl2h
 :q
 
 *entries*
+*exits*
